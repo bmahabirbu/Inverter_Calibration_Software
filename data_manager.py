@@ -79,3 +79,9 @@ class data_manager:
         num_columns = len(self.vdata_list[0]) if self.vdata_list else 0  # Check if there are any rows      
         print(f"cNumber of rows: {num_rows}")
         print(f"cNumber of columns: {num_columns}")
+    
+    def clear_data(self):
+        self.vdata_list = []
+        self.cdata_list = []
+        self.get_vsize()
+        self.get_csize()

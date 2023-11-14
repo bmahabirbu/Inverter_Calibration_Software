@@ -25,9 +25,9 @@ def full_voltage_sweep():
     volt_inc = kpsu.start_v_value
     while volt_inc <= kpsu.max_voltage:
         try:
-            ref_voltage = kpsu.control_power_supply(voltage_setpoint=volt_inc, current_setpoint=kpsu.stable_curr)
+            kpsu.control_power_supply(voltage_setpoint=volt_inc, current_setpoint=kpsu.stable_curr)
             measured_voltages = pm.get_measured_voltages()
-            measured_voltages.insert(0, ref_voltage)
+            measured_voltages.insert(0, volt_inc)
             dm.append_voltages(measured_voltages)
             volt_inc += kpsu.increment_v
         except Exception as e: 
@@ -42,9 +42,9 @@ def full_current_sweep():
     curr_inc = kpsu.start_c_value
     while curr_inc <= kpsu.max_current:
         try:
-            ref_current = kpsu.control_power_supply(voltage_setpoint=kpsu.stable_volt, current_setpoint=curr_inc)
+            kpsu.control_power_supply(voltage_setpoint=kpsu.stable_volt, current_setpoint=curr_inc)
             measured_currents = pm.get_measured_currents()
-            measured_currents.insert(0, ref_current)
+            measured_currents.insert(0, curr_inc)
             dm.append_currents(measured_currents)
             curr_inc += kpsu.increment_c
         except Exception as e:  
