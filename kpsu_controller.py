@@ -16,7 +16,9 @@ class kn67psu_controller:
     # config values
     ip_address = "10.10.223.99"
     max_retry_attempts = 3
-    set_vc_delay = 1
+    v_delay = 1
+    # 30 Seconds to Wait for Resistor to Dissipate Heat
+    c_delay = 30
 
     # Start inc and limit Values for while loop 
     start_v_value = 0.0
@@ -130,7 +132,7 @@ class kn67psu_controller:
                     self.read_current()
                     # Continue
                     volt_inc += self.increment_v
-                    time.sleep(self.set_vc_delay)
+                    time.sleep(self.v_delay)
                     retry_successful = True
             except Exception as e:
                 retry_count += 1
@@ -170,7 +172,9 @@ class kn67psu_controller:
 
                     # Continue
                     curr_inc += self.increment_c
-                    time.sleep(self.set_vc_delay)
+                    print("Wait for Resistor to Dissipate Heat Seconds: "+str(self.c_delay))
+                    time.sleep(self.c_delay)
+                    print("Continuing")
                     retry_successful = True
             except Exception as e:
                 retry_count += 1
@@ -202,19 +206,23 @@ class kn67psu_controller:
                 self.set_current(current_setpoint)
                 self.enable_output()
 
+                # Reads the output of the keysight psu
                 voltage_actual = self.read_voltage()
                 current_actual = self.read_current()
 
                 # Probably want to add some rounding if were using the actual measurements
                 if self.vc_flag == 'volts':
                     output = voltage_actual
+                    time.sleep(self.v_delay)
+                    retry_successful = True
                 elif self.vc_flag == 'current':
                     output = current_actual
+                    print("Wait for Resistor to Dissipate Heat Seconds: "+str(self.c_delay))
+                    time.sleep(self.c_delay)
+                    print("Continuing")
+                    retry_successful = True
                 else:
                     print("error getting flag")
-        
-                time.sleep(self.set_vc_delay)
-                retry_successful = True
 
             except Exception as e:
                 retry_count += 1
