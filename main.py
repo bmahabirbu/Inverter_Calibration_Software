@@ -2,6 +2,7 @@
 print("Welcome to the Server Side Inverter Calibration Firmware (seperated files)!\n")
 
 import kpsu_controller as KPSU
+from kpsu_controller import time
 import data_manager as DM
 import particle_manager as PM
 import sys
@@ -36,6 +37,8 @@ def full_voltage_sweep():
     dm.voltages_to_csv()
     # turn off psu
     kpsu.control_power_supply(voltage_setpoint=0, current_setpoint=0)
+    time.delay(10)
+    print("Finished Voltage Measurements")
 
 def full_current_sweep():
     kpsu.set_vc_flag('current')
@@ -53,6 +56,8 @@ def full_current_sweep():
     dm.currents_to_csv()
     # turn off psu
     kpsu.control_power_supply(voltage_setpoint=0, current_setpoint=0)
+    time.delay(10)
+    print("Finished Current Measurements")
         
         
 def get_calibration():
@@ -63,4 +68,6 @@ def get_calibration():
     except ConnectionError:  # Catch the connection error
         return
     except Exception as e:  
-        return  
+        return
+    
+get_calibration()

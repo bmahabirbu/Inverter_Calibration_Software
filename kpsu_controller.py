@@ -109,12 +109,6 @@ class kn67psu_controller:
         return current_actual
     
     def voltage_sweep_check(self):
-        try:
-            self.connect_to_power_supply()
-        except pyvisa.errors.VisaIOError as e:
-            print("Power supply is disconnected. Aborting...")
-            return
-        
         # Initialize the voltage inc value
         volt_inc = self.start_v_value
         # Set the maximum number of retry attempts
@@ -123,6 +117,7 @@ class kn67psu_controller:
 
         while retry_count < self.max_retry_attempts and retry_successful == False:
             try:
+                self.connect_to_power_supply()
                 while volt_inc <= self.max_voltage:
                     self.set_voltage(volt_inc)
                     self.set_current(self.stable_curr)
@@ -139,7 +134,6 @@ class kn67psu_controller:
                 print(f"An error occurred in voltage sweep test: {e}")
                 if retry_count < self.max_retry_attempts:
                     print(f"Retrying ({retry_count}/{self.max_retry_attempts})...")
-                    time.sleep(self.set_vc_delay)
                 else:
                     print("Max retry attempts reached. Exiting.")
         try:
@@ -149,12 +143,6 @@ class kn67psu_controller:
             pass  # The variable was not defined
     
     def current_sweep_check(self):
-        try:
-            self.connect_to_power_supply()
-        except pyvisa.errors.VisaIOError as e:
-            print("Power supply is disconnected. Aborting...")
-            return
-        
         # Initialize the current inc value
         curr_inc = self.start_c_value
          # Set the maximum number of retry attempts
@@ -163,6 +151,7 @@ class kn67psu_controller:
 
         while retry_count < self.max_retry_attempts and retry_successful == False:
             try:
+                self.connect_to_power_supply()
                 while curr_inc <= self.max_current:
                     self.set_voltage(curr_inc)
                     self.set_current(self.stable_volt)
@@ -181,7 +170,6 @@ class kn67psu_controller:
                 print(f"An error occurred in voltage sweep test: {e}")
                 if retry_count < self.max_retry_attempts:
                     print(f"Retrying ({retry_count}/{self.max_retry_attempts})...")
-                    time.sleep(self.set_vc_delay)
                 else:
                     print("Max retry attempts reached. Exiting.")
         try:
@@ -191,17 +179,13 @@ class kn67psu_controller:
             pass  # The variable was not defined
 
     def control_power_supply(self, voltage_setpoint, current_setpoint):
-        try:
-            self.connect_to_power_supply()
-        except pyvisa.errors.VisaIOError as e:
-            raise e
-        
         # Set the maximum number of retry attempts
         retry_count = 0
         retry_successful = False
 
         while retry_count < self.max_retry_attempts and retry_successful == False:
             try:
+                self.connect_to_power_supply()
                 self.set_voltage(voltage_setpoint)
                 self.set_current(current_setpoint)
                 self.enable_output()
@@ -229,7 +213,6 @@ class kn67psu_controller:
                 print(f"An error occurred setting voltage and current: {e}")
                 if retry_count < self.max_retry_attempts:
                     print(f"Retrying ({retry_count}/{self.max_retry_attempts})...")
-                    time.sleep(self.set_vc_delay)
                 else:
                     print("Max retry attempts reached. Exiting.")
         try:
