@@ -38,6 +38,7 @@ def full_voltage_sweep():
     # turn off psu
     kpsu.control_power_supply(voltage_setpoint=0, current_setpoint=0)
     time.sleep(10)
+    kpsu.disable_output()
     print("Finished Voltage Measurements")
 
 def full_current_sweep():
@@ -60,6 +61,7 @@ def full_current_sweep():
     # turn off psu
     kpsu.control_power_supply(voltage_setpoint=0, current_setpoint=0)
     time.sleep(10)
+    kpsu.disable_output()
     print("Finished Current Measurements")
         
         
