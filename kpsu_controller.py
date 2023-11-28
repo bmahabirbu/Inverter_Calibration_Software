@@ -139,11 +139,11 @@ class kn57psu_controller:
         while retry_count < self.max_retry_attempts and retry_successful == False:
             try:
                 self.connect_to_power_supply()
+                self.enable_output()
                 while volt_inc <= self.max_voltage:
                     self.set_voltage(volt_inc)
                     self.set_current(self.stable_curr)
-                    self.enable_output()
-
+                    
                     self.read_voltage()
                     self.read_current()
                     # Continue
@@ -177,6 +177,7 @@ class kn57psu_controller:
         while retry_count < self.max_retry_attempts and retry_successful == False:
             try:
                 self.connect_to_power_supply()
+                self.enable_output()
                 while curr_inc <= self.max_current:
                     # New method for setting current 
                     V = self.c_factor * curr_inc
@@ -184,8 +185,7 @@ class kn57psu_controller:
 
                     self.set_voltage(rounded_V)
                     self.set_current(self.max_current)
-
-                    self.enable_output()
+                    
                     self.read_voltage()
                     self.read_current()
 
