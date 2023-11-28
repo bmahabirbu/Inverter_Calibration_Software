@@ -37,7 +37,7 @@ def full_voltage_sweep():
     dm.voltages_to_csv()
     # turn off psu
     kpsu.control_power_supply(voltage_setpoint=0, current_setpoint=0)
-    time.delay(10)
+    time.sleep(10)
     print("Finished Voltage Measurements")
 
 def full_current_sweep():
@@ -59,7 +59,7 @@ def full_current_sweep():
     dm.currents_to_csv()
     # turn off psu
     kpsu.control_power_supply(voltage_setpoint=0, current_setpoint=0)
-    time.delay(10)
+    time.sleep(10)
     print("Finished Current Measurements")
         
         

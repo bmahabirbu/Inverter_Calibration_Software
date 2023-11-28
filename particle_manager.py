@@ -86,12 +86,8 @@ class particle_manager:
         except Exception as e:
             print("An error occurred:", e)
 
-    # def get_current_inverter(self):
+    # TODO!
+
+    # def get_inverter_names(self):
     #     # nice to have
     #     pass
-
-    # def shift_inverter(self):
-    #     # nice to have
-    #     pass
-
-
