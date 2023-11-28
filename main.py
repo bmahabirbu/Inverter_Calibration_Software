@@ -47,10 +47,10 @@ def full_current_sweep():
     repeat_count = 5
     while curr_inc <= kpsu.max_current:
         try:
+            # New current setting method see kpsu attributes for more details
+            V = kpsu.c_factor * curr_inc
+            rounded_V = round(V, 3)
             for num in range(repeat_count):
-                # New current setting method see kpsu attributes for more details
-                V = kpsu.c_factor * curr_inc
-                rounded_V = round(V, 3)
                 kpsu.control_power_supply(voltage_setpoint=rounded_V, current_setpoint=kpsu.max_current)
                 measured_currents = pm.get_measured_currents()
                 measured_currents.insert(0, curr_inc)
