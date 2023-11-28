@@ -8,7 +8,7 @@ import particle_manager as PM
 import sys
 
 # Initalize classes
-kpsu = KPSU.kn67psu_controller()
+kpsu = KPSU.kn57psu_controller()
 pm = PM.particle_manager()
 
 # # Get Inverter count than initalize data manager
@@ -45,7 +45,10 @@ def full_current_sweep():
     curr_inc = kpsu.start_c_value
     while curr_inc <= kpsu.max_current:
         try:
-            kpsu.control_power_supply(voltage_setpoint=kpsu.stable_volt, current_setpoint=curr_inc)
+            # New current setting method see kpsu attributes for more details
+            V = kpsu.c_factor * curr_inc
+            rounded_V = round(V, 3)
+            kpsu.control_power_supply(voltage_setpoint=rounded_V, current_setpoint=kpsu.max_current)
             measured_currents = pm.get_measured_currents()
             measured_currents.insert(0, curr_inc)
             dm.append_currents(measured_currents)

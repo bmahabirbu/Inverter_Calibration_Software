@@ -5,34 +5,55 @@ import time
 import pyvisa
 
 '''
-kn67psu_controller class
+kn57psu_controller class
 Functionality:
-1) Contains code necessary to interface with a keysight n76 power supply
+1) Contains code necessary to interface with a keysight N5767A Power Supply, 60 V, 25 A, 1500 W
 2) Contains code to set voltage and current over LAN
-3) TO DO: Create a subclass that controls en e36300 power supply
+3) TO DO: Create a class that controls the e36300 power supply
 '''
 
-class kn67psu_controller:
+class kn57psu_controller:
     # config values
     ip_address = "10.10.223.99"
     max_retry_attempts = 3
     v_delay = 1
     # 30 Seconds to Wait for Resistor to Dissipate Heat
     c_delay = 30
-
-    # Start inc and limit Values for while loop 
+    # Start inc and limit values for voltage sweep
     start_v_value = 0.0
     increment_v = 1.0
     max_voltage= 50.0
 
+    # Conversion Factor for Current Measurement
+    # Circuit is connected in parallel with the inverter 
+    # having a 4 ohm resistor and 2 25 ohm shunt resistors 
+    # To reduce the psu spike current when switching to current mode
+
+    # Below is the math
+
+    # R1 = 4 ohms
+    # R2 = 50 ohms
+    # R equivalent = [1/R1 + 1/R2]^-1
+    # R eq = 100/27
+    # V = IR
+    # V = 100/27*I
+    c_factor = 100.0/27.0
+
+    # Instead of having a high voltage and changing current values
+    # The new method is to set the current at max output and calculate
+    # what the max current will be from setting a specific voltage
+
+    # For example, at 10V the max current would be 2.7 amps
+    # I = 27/100 * 10 = 27/10 = 2.7
+    # So the sweep would change the voltage to match a current 
+    # loop of 0-10 amps. i.e solve for voltage. 27/100 * V = I
+    # So now we have a formula that can map what voltage is needed to get the desired amps
     start_c_value = 0.0
     increment_c = 0.5
     max_current = 10.0
 
     #Stable current value for voltage sweep
     stable_curr = 0.2
-    #Stable voltage value for current sweep
-    stable_volt = 50.0
 
     def __init__(self):
         #default value
@@ -137,6 +158,10 @@ class kn67psu_controller:
                 else:
                     print("Max retry attempts reached. Exiting.")
         try:
+            # Set voltage and current low and turn off output
+            self.set_voltage(0)
+            self.set_current(0)
+            self.disable_output()
             # Close the connection
             self.close_resource()
         except NameError:
@@ -153,8 +178,13 @@ class kn67psu_controller:
             try:
                 self.connect_to_power_supply()
                 while curr_inc <= self.max_current:
-                    self.set_voltage(curr_inc)
-                    self.set_current(self.stable_volt)
+                    # New method for setting current 
+                    V = self.c_factor * curr_inc
+                    rounded_V = round(V, 3)
+
+                    self.set_voltage(rounded_V)
+                    self.set_current(self.max_current)
+
                     self.enable_output()
                     self.read_voltage()
                     self.read_current()
@@ -173,6 +203,10 @@ class kn67psu_controller:
                 else:
                     print("Max retry attempts reached. Exiting.")
         try:
+            # Set voltage and current low and turn off output
+            self.set_voltage(0)
+            self.set_current(0)
+            self.disable_output()
             # Close the connection
             self.close_resource()
         except NameError:
