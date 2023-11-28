@@ -44,15 +44,17 @@ def full_voltage_sweep():
 def full_current_sweep():
     kpsu.set_vc_flag('current')
     curr_inc = kpsu.start_c_value
+    repeat_count = 5
     while curr_inc <= kpsu.max_current:
         try:
-            # New current setting method see kpsu attributes for more details
-            V = kpsu.c_factor * curr_inc
-            rounded_V = round(V, 3)
-            kpsu.control_power_supply(voltage_setpoint=rounded_V, current_setpoint=kpsu.max_current)
-            measured_currents = pm.get_measured_currents()
-            measured_currents.insert(0, curr_inc)
-            dm.append_currents(measured_currents)
+            for num in range(repeat_count):
+                # New current setting method see kpsu attributes for more details
+                V = kpsu.c_factor * curr_inc
+                rounded_V = round(V, 3)
+                kpsu.control_power_supply(voltage_setpoint=rounded_V, current_setpoint=kpsu.max_current)
+                measured_currents = pm.get_measured_currents()
+                measured_currents.insert(0, curr_inc)
+                dm.append_currents(measured_currents)
             curr_inc += kpsu.increment_c
         except Exception as e:  
             print(f"An unexpected current sweep error occurred:")
