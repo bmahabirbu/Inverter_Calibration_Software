@@ -72,5 +72,6 @@ def get_calibration():
         return
     except Exception as e:  
         return
-    
-get_calibration()
+
+# full_voltage_sweep()
+# full_current_sweep()    

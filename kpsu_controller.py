@@ -18,7 +18,7 @@ class kn57psu_controller:
     max_retry_attempts = 3
     v_delay = 1
     # 30 Seconds to Wait for Resistor to Dissipate Heat
-    c_delay = 30
+    c_delay = 60
     # Start inc and limit values for voltage sweep
     start_v_value = 0.0
     increment_v = 1.0
