@@ -97,4 +97,12 @@ def get_calibration():
     except Exception as e:  
         return
 
-voltage_sign_wave()
+# voltage_sign_wave()
+
+# max voltage = 39.92016 fr current at 10amps with 2k resistor paraellel 
+kpsu.control_power_supply(voltage_setpoint=39.92016, current_setpoint=kpsu.max_current)
+for i in range(0,5):
+    pm.get_measured_currents()
+    print("Wait for Resistor to Dissipate Heat Seconds: "+str(120))
+    time.sleep(120)
+    print("Continuing")
