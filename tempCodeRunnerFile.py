@@ -1,1 +1,2 @@
-pm.get_measured_voltages()
+            time.sleep(0.5)
+            print(volt_inc)

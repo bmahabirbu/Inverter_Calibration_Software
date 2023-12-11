@@ -16,13 +16,13 @@ class kn57psu_controller:
     # config values
     ip_address = "10.10.223.99"
     max_retry_attempts = 3
-    v_delay = 1
+    v_delay = 10
     # 30 Seconds to Wait for Resistor to Dissipate Heat
     c_delay = 60
     # Start inc and limit values for voltage sweep
     start_v_value = 0.0
-    increment_v = 1.0
-    max_voltage= 50.0
+    increment_v = 0.10
+    max_voltage= 20.0
 
     # Conversion Factor for Current Measurement
     # Circuit is connected in parallel with the inverter 
@@ -138,9 +138,12 @@ class kn57psu_controller:
 
         while retry_count < self.max_retry_attempts and retry_successful == False:
             try:
+                retry_successful = False
                 self.connect_to_power_supply()
                 self.enable_output()
                 while volt_inc <= self.max_voltage:
+                    retry_successful = False
+
                     self.set_voltage(volt_inc)
                     self.set_current(self.stable_curr)
                     
@@ -159,9 +162,10 @@ class kn57psu_controller:
                     print("Max retry attempts reached. Exiting.")
         try:
             # Set voltage and current low and turn off output
+            self.connect_to_power_supply()
+            self.disable_output()
             self.set_voltage(0)
             self.set_current(0)
-            self.disable_output()
             # Close the connection
             self.close_resource()
         except NameError:
@@ -204,9 +208,10 @@ class kn57psu_controller:
                     print("Max retry attempts reached. Exiting.")
         try:
             # Set voltage and current low and turn off output
+            self.connect_to_power_supply()
+            self.disable_output()
             self.set_voltage(0)
             self.set_current(0)
-            self.disable_output()
             # Close the connection
             self.close_resource()
         except NameError:
@@ -250,8 +255,12 @@ class kn57psu_controller:
                 else:
                     print("Max retry attempts reached. Exiting.")
         try:
+            self.connect_to_power_supply()
+            self.disable_output()
+            self.set_voltage(0)
+            self.set_current(0)
             # Close the connection
             self.close_resource()
             return output
-        except NameError:
+        except Exception as e:
             pass  # The variable was not defined

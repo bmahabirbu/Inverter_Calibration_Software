@@ -40,6 +40,31 @@ def full_voltage_sweep():
     time.sleep(10)
     print("Finished Voltage Measurements")
 
+def voltage_sign_wave():
+    direction = 1
+    kpsu.set_vc_flag('volts')
+    volt_inc = kpsu.start_v_value
+    while True:
+        try:
+            kpsu.control_power_supply(voltage_setpoint=volt_inc, current_setpoint=kpsu.max_current)
+            volt_inc += kpsu.increment_v * direction
+            # Code for sign wave
+            if volt_inc >= kpsu.max_voltage:
+                volt_inc = kpsu.max_voltage
+                direction = -1  # Change direction to decrement
+            elif volt_inc <= kpsu.start_v_value:
+                volt_inc = kpsu.start_v_value
+                direction = 1  # Change direction to increment
+    
+        except Exception as e: 
+            print(f"An unexpected voltage signwave error occurred:")
+            raise e
+    dm.voltages_to_csv()
+    # turn off psu
+    kpsu.control_power_supply(voltage_setpoint=0, current_setpoint=0)
+    time.sleep(10)
+    print("Finished Voltage Measurements")
+
 def full_current_sweep():
     kpsu.set_vc_flag('current')
     curr_inc = kpsu.start_c_value
@@ -73,5 +98,4 @@ def get_calibration():
     except Exception as e:  
         return
 
-# full_voltage_sweep()
-# full_current_sweep()    
+voltage_sign_wave()
