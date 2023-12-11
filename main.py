@@ -59,11 +59,10 @@ def voltage_sign_wave():
         except Exception as e: 
             print(f"An unexpected voltage signwave error occurred:")
             raise e
-    dm.voltages_to_csv()
     # turn off psu
     kpsu.control_power_supply(voltage_setpoint=0, current_setpoint=0)
     time.sleep(10)
-    print("Finished Voltage Measurements")
+    print("Finished Voltage sign wave")
 
 def full_current_sweep():
     kpsu.set_vc_flag('current')
